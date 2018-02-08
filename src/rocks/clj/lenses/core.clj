@@ -1,6 +1,7 @@
 (ns rocks.clj.lenses.core)
 
-(def ^:dynamic *backtrack* (list))
+(def ^:dynamic *backtrack* nil)
+(def ^:dynamic *threading* nil)
 
 (defn lens-values [m]
   (swap! *backtrack* conj (fn [v]
@@ -12,10 +13,13 @@
                             (zipmap v (vals m))))
   (keys m))
 
-(defn in [m k]
-  (swap! *backtrack* conj (fn [v]
-                            (assoc m k v)))
-  (get m k))
+(defn in [a1 a2]
+  (let [[m k] (case *threading*
+                :first [a1 a2]
+                :last  [a2 a1])]
+    (swap! *backtrack* conj (fn [v]
+                              (assoc m k v)))
+    (get m k)))
 
 (defn out [v]
   (let [[last-out] @*backtrack*]
@@ -37,9 +41,11 @@
   (map f coll))
 
 (defmacro -> [& forms]
-  `(binding [*backtrack* (atom ())]
+  `(binding [*backtrack* (atom ())
+             *threading* :first]
      (clojure.core/-> ~@forms)))
 
 (defmacro ->> [& forms]
-  `(binding [*backtrack* (atom ())]
+  `(binding [*backtrack* (atom ())
+             *threading* :last]
      (clojure.core/->> ~@forms)))
