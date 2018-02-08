@@ -41,11 +41,11 @@
   (map f coll))
 
 (defmacro -> [& forms]
-  `(binding [*backtrack* (atom ())
+  `(binding [*backtrack* (or *backtrack* (atom ()))
              *threading* :first]
      (clojure.core/-> ~@forms)))
 
 (defmacro ->> [& forms]
-  `(binding [*backtrack* (atom ())
+  `(binding [*backtrack* (or *backtrack* (atom ()))
              *threading* :last]
      (clojure.core/->> ~@forms)))
