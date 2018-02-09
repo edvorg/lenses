@@ -13,7 +13,7 @@ Simple proof-of-concept lenses implementation in Clojure
                                            in
                                            out
                                            out-all
-                                           map-lens
+                                           map
                                            ->
                                            ->>]]))
 
@@ -33,11 +33,11 @@ Simple proof-of-concept lenses implementation in Clojure
     (in :bar) ;; zoom into :bar
     (assoc :tux 3) ;; add :tux -> 3 mapping
     lens-values ;; zoom into values
-    (map-lens inc) ;; increment all values
+    (map inc) ;; increment all values
     out ;; zoom out
 
     lens-keys ;; lens in keys
-    (map-lens name) ;; convert all keywords to strings
+    (map name) ;; convert all keywords to strings
     out-all ;; zoom outmost
     )
 

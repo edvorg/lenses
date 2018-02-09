@@ -37,8 +37,11 @@
         (swap! *backtrack* rest)
         (out-all (last-out v))))))
 
-(defn map-lens [coll f]
-  (map f coll))
+(defn map [& args]
+  (let [[f colls] (case *threading*
+                    :first [(last args) (drop-last args)]
+                    :last  [(first args) (rest args)])]
+    (apply clojure.core/map f colls)))
 
 (defmacro -> [& forms]
   `(binding [*backtrack* (or *backtrack* (atom ()))
